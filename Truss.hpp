@@ -14,9 +14,11 @@ class Truss {
 			double x, y;
 			bool fixedX, fixedY;
 			double externalX, externalY;
+			double connectionLen;//sum of connections to this joint
+			//linked list of members needed, called "members"
 		};
 
-		struct Members{
+		struct Member{
 			Members();
 			Joint * joint1;
 			Joint * joint2;
@@ -27,7 +29,8 @@ class Truss {
 		~Truss();
 		void output();
 		Joint* getJoints();
-		void solve();
+		bool checkIfBetterState(bool xDir, double increment)
+		void optimize();
 
 	private:
 		unsigned int numJoints;
@@ -35,6 +38,8 @@ class Truss {
 		Joint *pin, *normalJoint;
 
 		// solves for moment above pin and net x and y force
+		bool validSolve();
+		bool solve();
 		void solveGeneralSystem();
 		void solveJoint(Joint* j);
 

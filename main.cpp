@@ -18,7 +18,7 @@ int main(){
         fin >> joints[i].x >> joints[i].y >> joints[i].fixedX >> joints[i].fixedY >> joints[i].externalX >> joints[i].externalY;
     }
 
-    truss.solve();
+    truss.optimize();
     truss.output(fout);
 
 }

@@ -21,10 +21,6 @@ Truss::Joint* Truss::getJoints() {
 	return this->joints;
 }
 
-void Truss::solve() {
-
-}
-
 void Truss::solveGeneralSystem() {
 	// assumes normal reaction force is horizontally or vertically aligned
 	double momentAtPin = 0; // counterclockwise is positive
@@ -55,8 +51,132 @@ void Truss::solveGeneralSystem() {
 	}
 }
 void Truss::solveJoint(Joint* j) {
-
+    //produce equations for each point
 }
+
+bool Truss::solve() {
+    //solve system of equations given by all joints
+    if (solveValid()){
+        //change all the system parameters
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Truss::solveValid(){
+    //check all solved values, check if < 7
+    //return true is all are, false otherwise.
+}
+
+bool Truss::checkIfBetterState(bool xDir, int jointNum, double increment){
+	bool betterState = true;
+	int numMembers = joints[jointNum].members.size;
+	double * newLengths = new double[numMembers];
+	double totalLen = 0;
+	if(xDir) {
+        joints[jointNum].x += increment;
+    } else {
+	    joints[jointNum].y += increment;
+	}
+
+	Node * curMember = joints[jointNum].members.head;
+	memberNum = 0;
+	while (curMember != NULL){
+		double newLen = pow( pow(curMember->data->joint1->x - curMember->data->joint2->x , 2) + pow(curMember->data->joint1->x - curMember->data->joint2->x, 2 ) , 0.5);
+		if(newLen > curMember->data->len  && newLen > 3){
+			betterState = false;
+			break;
+		}
+        totalLen += newLen;
+		curMember = curmember->next;
+		memberNum++;
+	}
+    if (totalLen < joints[jointNum].connectionLen && betterState){
+        betterState = true;
+    }
+
+	if (betterState){
+		for (int i = 0; i< memberNum; i++){
+		    //change all the member geometry
+		}
+
+	} else {
+        if(xDir) {
+            joints[jointNum].x -= increment;
+        } else {
+            joints[jointNum].y -= increment;
+        }
+	}
+
+	delete [] newLengths;
+	newLengths = NULL;
+
+	return betterState;
+}
+
+void Truss::optimize(){
+	bool systemChanged = false;
+	double movementIncrement = 0.25;
+
+	while (movementIncrement > 0.01){
+		systemChanged = true;
+		while (systemChanged){
+			systemChanged = false;
+			for (int i  = 1; i < numJoints; i++){
+				//testing horizontal movement
+			    if (!joints[i].fixedX){
+					betterState = checkIfBetterState(true, i, movementIncrement);
+					if (betterState) {
+					    if(solve()) {
+                            systemChanged = true;
+                        } else {
+                            //move node back and adjust dimensions
+					    }
+					} else {
+						betterState = checkIfBetterState(true, i, -movementIncrement);
+                        if (betterState){
+                            if (solve()){
+                                systemChanged = true;
+                            } else {
+                                //move node back and adjust dimensions
+                            }
+                        }
+					}
+				}
+
+			    //testing vertical movement
+				if (!joints[i].fixedY){
+                    betterState = checkIfBetterState(false, i, movementIncrement);
+                    if (betterState) {
+                        if(solve()) {
+                            systemChanged = true;
+                        } else {
+                            //move node back and adjust dimensions
+                        }
+                    } else {
+                        betterState = checkIfBetterState(false, i, -movementIncrement);
+                        if (betterState){
+                            if (solve()){
+                                systemChanged = true;
+                            } else {
+                                //move node back and adjust dimensions
+                            }
+                        }
+                    }
+				}
+				//both movement directions tested
+
+			}
+			//all joints have been moved
+		}
+		//system did not change on last iteration
+		movementIncrement /= 4;
+	}
+	//movement increment <0.01
+}
+
+
 
 void Truss::output(ofstream & out){
 	for(int i  = 0; i < numJoints; i++){
