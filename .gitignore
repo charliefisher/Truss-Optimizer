@@ -34,4 +34,9 @@
 # Eclipse
 .settings
 .cproject
-.project
+.project 
+
+# Clion
+.idea
+cmake-build-debug
+CMakeLists
