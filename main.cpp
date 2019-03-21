@@ -21,23 +21,4 @@ int main(){
     truss.solve();
     truss.output(fout);
 
-    system("PAUSE");
-
-
 }
-
-Truss::output(ofstream & out){
-    for(int i  = 0; i < numJoints; i++){
-        out << "Joint " << i+1 << ":  ( " << joints[i].x << " , " << joints[i].y << " )";
-    }
-}
-
-Truss::solveJoint(int index){
-
-}
-
-struct Members{
-    Joint * joint1;
-    Joint * joint2;
-    length
-};

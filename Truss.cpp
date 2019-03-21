@@ -58,6 +58,13 @@ void Truss::solveJoint(Joint* j) {
 
 }
 
+void Truss::output(ofstream & out){
+	for(int i  = 0; i < numJoints; i++){
+	out << "Joint " << i+1 << ":  ( " << joints[i].x << " , " << joints[i].y << " )";
+	}
+}
+
+
 
 
 

@@ -16,8 +16,16 @@ class Truss {
 			double externalX, externalY;
 		};
 
+		struct Members{
+			Members();
+			Joint * joint1;
+			Joint * joint2;
+			double length, force;
+		};
+
 		Truss(unsigned int numJoints);
 		~Truss();
+		void output();
 		Joint* getJoints();
 		void solve();
 
