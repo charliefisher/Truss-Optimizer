@@ -15,7 +15,7 @@ class Truss {
 			bool fixedX, fixedY;
 			double externalX, externalY;
 			double connectionLen;//sum of connections to this joint
-			vector<*Member> connections;//linked list of members needed, called "members"
+			vector<*Member> connections;//vector of
 		};
 
 		struct Member{
@@ -30,7 +30,8 @@ class Truss {
 		~Truss();
 		void output();
 		Joint* getJoints();
-		bool checkIfBetterState(bool xDir, double increment)
+
+		//main function to optimize the system. Calls other functions
 		void optimize();
 
 	private:
@@ -38,12 +39,17 @@ class Truss {
 		unsigned int numMembers;
 		Joint* joints;
 		Joint *pin, *normalJoint;
+		vector<double> validForces;
 
-		// solves for moment above pin and net x and y force
+
 		bool validSolve();
-		bool solve();
+		bool solveInternal();
+		// solves for moment above pin and net x and y force
 		void solveGeneralSystem();
-		void solveJoint(Joint* j);
+		void initialSolve();
+
+		//will update member lengths and move node if it is less costly, otherwise will leave everything unchanged
+		double * checkIfBetterState(bool xDir, double increment)
 
 		// should not be called
 		Truss();

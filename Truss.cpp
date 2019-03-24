@@ -18,6 +18,7 @@ Truss::Truss(unsigned int numJoints, unsigned int numMembers) {
 	this->joints = new Joint[this->numJoints];
 	this->pin = &joints[0];
 	this->normalJoint = &joints[1];
+
 }
 
 Truss::~Truss() {
@@ -58,86 +59,129 @@ void Truss::solveGeneralSystem() {
 	}
 }
 
-void Truss::jointEquations(Joint* j, double * xRow, double * yRow, double * externalX, double * externalY) {
-	externalX = -j->externalX;
-	externalY = -j->externalY;
-	for(int i = 0; i < j->connections.size(); i++){
-		xRow[j->connections[i]->id] = (j->connections[i]->joint1->x + j->connections[i]->joint2->x - 2*j->y)/connections->length;
-		yRow[j->connections[i]->id] = (j->connections[i]->joint1->y + j->connections[i]->joint2->y - 2*j->y)/connections->length;
+void Truss::initialSolve(){
+	solveGeneralSystem();
+
+	mat equations = mat(numJoints*2, numMembers, fill::zeros);
+	vec external = vec(numJoints*2, fill::zeroes);
+	vec forces = vec(numMembers, fill::zeroes);
+
+	for (int i = 0; i < numJoints; i++){
+		Joint * j = joints[i];
+		external.at(i*2) = -joints[i]->externalX;
+		externat.at(i*2+1) = -joints[i]->externalY;
+		for(int k = 0; i < joints[i]->connections.size(); i++) {
+			equations.at(i*2, k) = joints[i]->connections[j]->joint1->x + j->connections[i]->joint2->x - 2*j->y)/connections->lengt
+		}
+	}
+
+	solve(forces, equations, external);
+
+	for (int i = 0; i < numMembers; i++){
+		validForces[i] = forces(i);
 	}
 }
 
-bool Truss::solve() {
-    //create matrix
+bool Truss::solveInternal() {
+    solveGeneralSystem();
+
+	mat equations = mat(numJoints*2, numMembers, fill::zeros);
+    vec external = vec(numJoints*2, fill::zeroes);
+    vec forces = vec(numMembers, fill::zeroes);
+
     for (int i = 0; i < numJoints; i++){
-    	jointEquations(joints[i], )
+    	Joint * j = joints[i];
+		external.at(i*2) = -joints[i]->externalX;
+		externat.at(i*2+1) = -joints[i]->externalY;
+		for(int k = 0; i < joints[i]->connections.size(); i++) {
+			equations.at(i*2, k) = joints[i]->connections[j]->joint1->x + j->connections[i]->joint2->x - 2*j->y)/connections->lengt
+		}
     }
-	//solve system of equations given by all joints
-    if (solveValid()){
-        //change all the system parameters
+
+    solve(forces, equations, external);
+
+    bool solveValid = true;
+    for (int i = 0; i < numMembers; i++){
+    	if(forces(i) > validForces[i] && forces(i) > 7){
+    		solveValid = false;
+    		break;
+    	}
+    }
+
+    if (solveValid){
+		for (int i = 0; i < numMembers; i++){
+			validForces[i] = forces(i);
+		}
         return true;
     } else {
         return false;
     }
 }
 
-bool Truss::solveValid(double * forces){
-	for(int i= 0; i < forces->size(); i++){
-
-	}
-	//check all solved values, check if < 7
-    //return true is all are, false otherwise.
-}
-
-bool Truss::checkIfBetterState(bool xDir, int jointNum, double increment){
+double * Truss::checkIfBetterState(bool xDir, int jointNum, double increment) {
 	bool betterState = true;
-	int numMembers = joints[jointNum].members.size;
+	Joint *joint = joints + jointNum;
+	int numMembers = joint->connections.size();
 	double * newLengths = new double[numMembers];
+	double * oldLengths = NULL;
 	double totalLen = 0;
+
+	//changes x or y value based on the direction given
 	if(xDir) {
         joints[jointNum].x += increment;
     } else {
 	    joints[jointNum].y += increment;
 	}
 
-	Node * curMember = joints[jointNum].members.head;
-	memberNum = 0;
-	while (curMember != NULL){
-		double newLen = pow( pow(curMember->data->joint1->x - curMember->data->joint2->x , 2) + pow(curMember->data->joint1->x - curMember->data->joint2->x, 2 ) , 0.5);
-		if(newLen > curMember->data->len  && newLen > 3){
-			betterState = false;
+	for (int i = 0; i < numMembers; i++){
+		newLengths[i] = pow( pow(joint->connections[i]->data->joint1->x - joint->connections[i]->data->joint2->x , 2) + pow(joint->connections[i]->data->joint1->x - joint->connections[i]->data->joint2->x, 2 ) , 0.5);
+		if(newLengths[i] > joint->connections[i]->length  && newLen > 3){
+			int betterState = false;
 			break;
 		}
         totalLen += newLen;
-		curMember = curmember->next;
-		memberNum++;
 	}
-    if (totalLen < joints[jointNum].connectionLen && betterState){
-        betterState = true;
-    }
 
+    if (totalLen >= joint->connectionLen){
+        betterState = false;
+    }
+	// if new state is better, copy length values into old length and
 	if (betterState){
-		for (int i = 0; i< memberNum; i++){
+		oldLengths = new double[numMembers];
+		for (int i = 0; i< numMembers); i++){
 		    //change all the member geometry
+			oldLengths[i] = joint->connections[i]->length;
+		    joint->connections[i]->length = newLengths[i]
 		}
 
-	} else {
+	}
+	//reverts x or y value based on direction given if new state is not better
+	else {
         if(xDir) {
             joints[jointNum].x -= increment;
         } else {
-            joints[jointNum].y -= increment;
-        }
+			joints[jointNum].y -= increment;
+		}
 	}
 
 	delete [] newLengths;
 	newLengths = NULL;
 
-	return betterState;
+	return oldLengths;
 }
+
+void Truss::revertLengths(int jointNum, double * oldLengths){
+	for (int i = 0; i < joints[jointNum].connections->length; i++){
+		joints[jointNum].connections->length = oldLengths[i];
+	}
+}
+
+
 
 void Truss::optimize(){
 	bool systemChanged = false;
 	double movementIncrement = 0.25;
+	double * oldLengths = NULL;
 
 	while (movementIncrement > 0.01){
 		systemChanged = true;
@@ -146,44 +190,58 @@ void Truss::optimize(){
 			for (int i  = 1; i < numJoints; i++){
 				//testing horizontal movement
 			    if (!joints[i].fixedX){
-					betterState = checkIfBetterState(true, i, movementIncrement);
-					if (betterState) {
+					oldLengths = checkIfBetterState(true, i, movementIncrement);
+					if (oldLengths != NULL) {
 					    if(solve()) {
                             systemChanged = true;
                         } else {
-                            //move node back and adjust dimensions
+							joints[i].x -= movementIncrement;
+					    	revertLengths(i, oldLengths);//move node back and adjust dimensions
 					    }
 					} else {
-						betterState = checkIfBetterState(true, i, -movementIncrement);
-                        if (betterState){
+						oldLengths = checkIfBetterState(true, i, -movementIncrement);
+                        if (oldLengths != NULL){
                             if (solve()){
                                 systemChanged = true;
                             } else {
-                                //move node back and adjust dimensions
+                                joints[i].x += movementIncrement;
+                            	revertLengths(i, oldLengths);
                             }
                         }
 					}
+					if(oldLengths != NULL){
+						delete [] oldLengths;
+						oldLengths = NULL;
+					}
+
 				}
 
 			    //testing vertical movement
 				if (!joints[i].fixedY){
-                    betterState = checkIfBetterState(false, i, movementIncrement);
-                    if (betterState) {
-                        if(solve()) {
-                            systemChanged = true;
-                        } else {
-                            //move node back and adjust dimensions
-                        }
-                    } else {
-                        betterState = checkIfBetterState(false, i, -movementIncrement);
-                        if (betterState){
-                            if (solve()){
-                                systemChanged = true;
-                            } else {
-                                //move node back and adjust dimensions
-                            }
-                        }
-                    }
+					oldLengths = checkIfBetterState(false, i, movementIncrement);
+					if (oldLengths != NULL) {
+						if(solve()) {
+							systemChanged = true;
+						} else {
+							joints[i].x -= movementIncrement;
+							revertLengths(i, oldLengths);//move node back and adjust dimensions
+						}
+					} else {
+						oldLengths = checkIfBetterState(false, i, -movementIncrement);
+						if (oldLengths != NULL){
+							if (solve()){
+								systemChanged = true;
+							} else {
+								joints[i].x += movementIncrement;
+								revertLengths(i, oldLengths);
+							}
+						}
+					}
+					if(oldLengths != NULL){
+						delete [] oldLengths;
+						oldLengths = NULL;
+					}
+
 				}
 				//both movement directions tested
 
@@ -202,6 +260,7 @@ void Truss::output(ofstream & out){
 	for(int i  = 0; i < numJoints; i++){
 	out << "Joint " << i+1 << ":  ( " << joints[i].x << " , " << joints[i].y << " )";
 	}
+
 }
 
 
