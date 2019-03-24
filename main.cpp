@@ -10,8 +10,8 @@ const string FILEIN = "", FILEOUT = "";
 int main(){
     ifstream fin(FILEIN);
     ofstream fout(FILEOUT);
-    fin >> int numJoints;
-    Truss truss(numJoints);
+    fin >> int numJoints >> int numMembers;
+    Truss truss(numJoints, numMembers);
 
     Truss::Joint * joints = getJoints();
     for (int i = 0; i < numJoints; i++){

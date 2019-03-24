@@ -15,11 +15,12 @@ class Truss {
 			bool fixedX, fixedY;
 			double externalX, externalY;
 			double connectionLen;//sum of connections to this joint
-			//linked list of members needed, called "members"
+			vector<*Member> connections;//linked list of members needed, called "members"
 		};
 
 		struct Member{
-			Members();
+			Member();
+			int id;
 			Joint * joint1;
 			Joint * joint2;
 			double length, force;
@@ -34,6 +35,7 @@ class Truss {
 
 	private:
 		unsigned int numJoints;
+		unsigned int numMembers;
 		Joint* joints;
 		Joint *pin, *normalJoint;
 

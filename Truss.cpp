@@ -6,8 +6,15 @@ Truss::Joint::Joint() {
 	externalX=externalY=0;
 }
 
-Truss::Truss(unsigned int numJoints) {
+Truss::Member::Member(){
+	id = -1;
+	joint1 = joint2 = NULL;
+	length = force = 0;
+}
+
+Truss::Truss(unsigned int numJoints, unsigned int numMembers) {
 	this->numJoints = numJoints;
+	this->numMembers = numMembers;
 	this->joints = new Joint[this->numJoints];
 	this->pin = &joints[0];
 	this->normalJoint = &joints[1];
@@ -50,12 +57,22 @@ void Truss::solveGeneralSystem() {
 		}
 	}
 }
-void Truss::solveJoint(Joint* j) {
-    //produce equations for each point
+
+void Truss::jointEquations(Joint* j, double * xRow, double * yRow, double * externalX, double * externalY) {
+	externalX = -j->externalX;
+	externalY = -j->externalY;
+	for(int i = 0; i < j->connections.size(); i++){
+		xRow[j->connections[i]->id] = (j->connections[i]->joint1->x + j->connections[i]->joint2->x - 2*j->y)/connections->length;
+		yRow[j->connections[i]->id] = (j->connections[i]->joint1->y + j->connections[i]->joint2->y - 2*j->y)/connections->length;
+	}
 }
 
 bool Truss::solve() {
-    //solve system of equations given by all joints
+    //create matrix
+    for (int i = 0; i < numJoints; i++){
+    	jointEquations(joints[i], )
+    }
+	//solve system of equations given by all joints
     if (solveValid()){
         //change all the system parameters
         return true;
@@ -64,8 +81,11 @@ bool Truss::solve() {
     }
 }
 
-bool Truss::solveValid(){
-    //check all solved values, check if < 7
+bool Truss::solveValid(double * forces){
+	for(int i= 0; i < forces->size(); i++){
+
+	}
+	//check all solved values, check if < 7
     //return true is all are, false otherwise.
 }
 
