@@ -15,7 +15,7 @@ class Truss {
 			bool fixedX, fixedY;
 			double externalX, externalY;
 			double connectionLen;//sum of connections to this joint
-			vector<*Member> connections;//vector of
+			vector<*Member> connections;//vector of pointers to members
 		};
 
 		struct Member{
@@ -23,7 +23,7 @@ class Truss {
 			int id;
 			Joint * joint1;
 			Joint * joint2;
-			double length, force;
+			double length;
 		};
 
 		Truss(unsigned int numJoints);
