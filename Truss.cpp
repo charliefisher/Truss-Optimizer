@@ -1,38 +1,48 @@
 #include "Truss.hpp"
+#include <armadillo>
+
+using namespace arma;
 
 Truss::Joint::Joint() {
 	x=y=0;
 	fixedX=fixedY=false;
 	externalX=externalY=0;
+	connectionLen = 0;
 }
 
 Truss::Member::Member(){
 	id = -1;
 	joint1 = joint2 = NULL;
-	length = force = 0;
+	length = 0;
 }
 
-Truss::Truss(unsigned int numJoints, unsigned int numMembers) {
+Truss::Truss(int numJoints, int numMembers) {
 	this->numJoints = numJoints;
 	this->numMembers = numMembers;
 	this->joints = new Joint[this->numJoints];
+	this->members = new Member[this->numMembers];
 	this->pin = &joints[0];
 	this->normalJoint = &joints[1];
 }
 
 Truss::~Truss() {
 	delete[] joints;
+	delete[] members;
 }
 
 Truss::Joint* Truss::getJoints() {
 	return this->joints;
 }
 
+Truss::Member* Truss::getMembers() {
+	return this->members;
+}
+
 void Truss::solveGeneralSystem() {
 	// assumes normal reaction force is horizontally or vertically aligned
 	double momentAtPin = 0; // counterclockwise is positive
 	// calculate moments about every joint
-	for (unsigned int i = 2; i < this->numJoints; i++) {
+	for (int i = 2; i < this->numJoints; i++) {
 		// if the joint has an external x (i.e. has any external force
 		if (joints[i].externalY != 0) {
 			momentAtPin += joints[i].x*joints[i].externalY;
@@ -44,72 +54,102 @@ void Truss::solveGeneralSystem() {
 	if (normalJoint->x == 0) { // the reactions are vertically aligned
 		 normalJoint->externalX = momentAtPin/normalJoint->y;
 		 pin->externalX = -normalJoint->externalX;
-
-		 for (unsigned int i = 2; i < this->numJoints; i++) {
+		 pin->externalY = 0;
+		 for (int i = 2; i < this->numJoints; i++) {
 			 pin->externalY -= joints[i].externalY;
 		 }
 	}
 	else { // the reactions forces are horizontally aligned
 		normalJoint->externalY = -momentAtPin/normalJoint->x;
 		pin->externalX=0;
-		for (unsigned int i = 1; i < this->numJoints; i++) {
+		pin->externalY = 0;
+		for (int i = 1; i < this->numJoints; i++) {
 			pin->externalY -= joints[i].externalY;
 		}
 	}
 }
 
 void Truss::initialSolve(){
-	for (int i = 0; i < numJoints; i++){
-		for (int j = 0; j < joints[i].connections.size(); j++) {
-			if (joints[i].connections[j] == 0);
-				joints[i].connections[j].length = pow(pow(joints[i].connections[j]->joint1->x - joints[i].connections[j]->joint2->x, 2) + pow(joints[i].connections[j]->joint1->y - joints[i].connections[i]->joint2->y, 2), 0.5);
+	for (int i = 0; i < numMembers; i++){
+		members[i].length = pow(pow(members[i].joint1->x - members[i].joint2->x, 2) + pow(members[i].joint1->y - members[i].joint2->y, 2), 0.5);
+//		cout << "m" << i << "L: "<< members[i].length << endl;
+	}
+
+	for (int i = 0; i < numJoints; i++) {
+		for (int k = 0; k < joints[i].connections.size(); k++) {
+			joints[i].connectionLen += members[joints[i].connections[k]].length;
+//			cout << "joint " << i << "connectionLen: " << joints[i].connectionLen << endl;
 		}
 	}
 
 	solveGeneralSystem();
 
-	mat equations = mat(numJoints*2, numMembers, fill::zeros);
-	vec external = vec(numJoints*2, fill::zeroes);
-	vec forces = vec(numMembers, fill::zeroes);
+	arma::mat equations = arma::mat(numJoints*2, numMembers, arma::fill::zeros);
+	arma::vec external = arma::vec(numJoints*2, arma::fill::zeros);
+
 
 	for (int i = 0; i < numJoints; i++){
 		Joint * j = &joints[i];
 		external(i*2) = -j->externalX;
 		external(i*2+1) = -j->externalY;
-		for(int k = 0; i < joints[i].connections.size(); i++) {
-			equations.at(i*2, k) = j->connections[k]->joint1->x + j->connections[k]->joint2->x - 2*j->y)/connections->length;
+
+		for(int k = 0; k < joints[i].connections.size(); k++) {
+			equations(i * 2, joints[i].connections[k]) = (members[joints[i].connections[k]].joint1->x + members[j->connections[k]].joint2->x - 2 * j->x) / members[j->connections[k]].length;
+			equations(i * 2 + 1, joints[i].connections[k]) = (members[joints[i].connections[k]].joint1->y + members[j->connections[k]].joint2->y - 2 * j->y) / members[j->connections[k]].length;
 		}
 	}
-
-	solve(forces, equations, external, solve_opts::allow_ugly);
-
+	//external.print();
+	//cout << endl;
+	//system("pause");
+//	equations.print();
+//	cout << endl;
+//	external.print();
+//	cout << endl;
+//	system("pause");
+	arma::vec forces = solve(equations, external);
+//	forces.print();
 	for (int i = 0; i < numMembers; i++){
-		validForces.push_back() = forces(i);
+		validForces.push_back(forces(i));
 	}
 }
 
 bool Truss::solveInternal() {
-    solveGeneralSystem();
+	//cout << "solving internal" << endl;
+	solveGeneralSystem();
 
-	mat equations = mat(numJoints*2, numMembers, fill::zeros);
-    vec external = vec(numJoints*2, fill::zeroes);
-    vec forces = vec(numMembers, fill::zeroes);
+	arma::mat equations = arma::mat(numJoints*2, numMembers, arma::fill::zeros);
+	arma::vec external = arma::vec(numJoints*2, arma::fill::zeros);
 
-    for (int i = 0; i < numJoints; i++){
-    	Joint * j = &joints[i];
-		external.at(i*2) = -joints[i].externalX;
-		externat.at(i*2+1) = -joints[i].externalY;
-		for(int k = 0; i < joints[i].connections.size(); i++) {
-			equations.at(i*2, k) = joints[i].connections[j]->joint1->x + j->connections[i]->joint2->x - 2*j->y)/connections->lengt
+
+	for (int i = 0; i < numJoints; i++) {
+		Joint * j = &joints[i];
+		external(i * 2) = -j->externalX;
+		external(i * 2 + 1) = -j->externalY;
+
+		for (int k = 0; k < joints[i].connections.size(); k++) {
+			equations(i * 2, joints[i].connections[k]) = (members[joints[i].connections[k]].joint1->x + members[j->connections[k]].joint2->x - 2 * j->x) / members[j->connections[k]].length;
+			equations(i * 2 + 1, joints[i].connections[k]) = (members[joints[i].connections[k]].joint1->y + members[j->connections[k]].joint2->y - 2 * j->y) / members[j->connections[k]].length;
 		}
-    }
-
-    solve(forces, equations, external, solve_opts::allow_ugly);
+	}
+	
+	//equations.print();
+	//cout << endl << "external" << endl;
+	/*external.print();
+	cout << endl;
+	*/
+	//external.print();
+	//cout << endl;
+	//system("pause");
+	arma::vec forces = solve(equations, external);
+	
+//	forces.print();
+//	cout << endl;*/
 
     bool solveValid = true;
     for (int i = 0; i < numMembers; i++){
-    	if(forces(i) > validForces[i] && forces(i) > 7){
-    		solveValid = false;
+    	if(fabs(forces(i)) >= fabs(validForces[i]) && fabs(forces(i)) > MAX_MEMBER_FORCE){
+			//cout << "invalid forces" << endl;
+			solveValid = false;
     		break;
     	}
     }
@@ -125,6 +165,7 @@ bool Truss::solveInternal() {
 }
 
 double * Truss::checkIfBetterState(bool xDir, int jointNum, double increment) {
+//	cout << "checking new state with joint " << jointNum << " moving " << xDir << " by " << increment << endl;
 	bool betterState = true;
 	Joint * joint = &joints[jointNum];
 	int numCon = joint->connections.size();
@@ -140,29 +181,42 @@ double * Truss::checkIfBetterState(bool xDir, int jointNum, double increment) {
 	}
 
 	for (int i = 0; i < numCon; i++){
-		newLengths[i] = pow( pow(joint->connections[i]->data->joint1->x - joint->connections[i]->data->joint2->x , 2) + pow(joint->connections[i]->data->joint1->x - joint->connections[i]->data->joint2->x, 2 ) , 0.5);
-		if(newLengths[i] > joint->connections[i]->length  && newLen > 3){
-			int betterState = false;
+		newLengths[i] = pow( pow(members[joint->connections[i]].joint1->x - members[joint->connections[i]].joint2->x , 2) + pow(members[joint->connections[i]].joint1->y - members[joint->connections[i]].joint2->y, 2 ) , 0.5);
+		if(newLengths[i] > members[joint->connections[i]].length  && newLengths[i] > 3.00000000){
+			betterState = false;
 			break;
 		}
-        totalLen += newLen;
+//		cout << "length " << i << newLengths[i] << endl;
+        totalLen += newLengths[i];
 	}
-
+//	cout << "previos length: " << joint->connectionLen << endl;
     if (totalLen >= joint->connectionLen){
         betterState = false;
     }
+	if (!betterState) {
+		for (int i = 0; i < numMembers; i++) {
+			if (fabs(validForces[i]) >= MAX_MEMBER_FORCE) {
+				betterState = true;
+				break;
+			}
+		}
+	}
 	// if new state is better, copy length values into old length and
 	if (betterState){
+//		cout << "state is better" << endl;
+		joint->connectionLen = totalLen;
 		oldLengths = new double[numCon];
-		for (int i = 0; i< numCon); i++){
+		for (int i = 0; i< numCon; i++){
 		    //change all the member geometry
-			oldLengths[i] = joint->connections[i]->length;
-		    joint->connections[i]->length = newLengths[i]
+			oldLengths[i] = members[joint->connections[i]].length;
+			members[joint->connections[i]].length = newLengths[i];
+//			cout << "m" << i << "L: " << members[joint->connections[i]].length << endl;
 		}
 
 	}
 	//reverts x or y value based on direction given if new state is not better
 	else {
+	//	cout << "state is worse. new: " <<totalLen << "\told:" <<joint->connectionLen << endl;
         if(xDir) {
             joint->x -= increment;
         } else {
@@ -178,38 +232,100 @@ double * Truss::checkIfBetterState(bool xDir, int jointNum, double increment) {
 
 void Truss::revertLengths(int jointNum, double * oldLengths){
 	for (int i = 0; i < joints[jointNum].connections.size(); i++){
-		joints[jointNum].connections[i]->length = oldLengths[i];
+		members[joints[jointNum].connections[i]].length = oldLengths[i];
 	}
 }
 
 void Truss::optimize(){
+	initialSolve();
 	bool systemChanged = false;
-	double movementIncrement = 0.25;
+	long double movementIncrement = 0.001;
 	double * oldLengths = NULL;
 
-	while (movementIncrement > 0.01){
+	while (movementIncrement > MIN_MOVEMENT_INCREMENT){
 		systemChanged = true;
 		while (systemChanged){
 			systemChanged = false;
 			for (int i  = 1; i < numJoints; i++){
-				//testing horizontal movement
-			    if (!joints[i].fixedX){
-					oldLengths = checkIfBetterState(true, i, movementIncrement);
+
+				//testing vertical movement
+				if (!joints[i].fixedY) {
+					oldLengths = checkIfBetterState(false, i, -movementIncrement);
 					if (oldLengths != NULL) {
-					    if(solve()) {
+						if (solveInternal()) {
+							systemChanged = true;
+						}
+						else {
+							joints[i].y += movementIncrement;
+							revertLengths(i, oldLengths);//move node back and adjust dimensions
+							for (int j = 0; j < numJoints; j++) {
+								joints[j].connectionLen = 0;
+								for (int con = 0; con < joints[j].connections.size(); con++) {
+									joints[j].connectionLen += members[joints[j].connections[con]].length;
+								}
+							}
+							solveGeneralSystem();
+						}
+					}
+					else {
+						oldLengths = checkIfBetterState(false, i, movementIncrement);
+						if (oldLengths != NULL) {
+							if (solveInternal()) {
+								systemChanged = true;
+							}
+							else {
+								joints[i].y -= movementIncrement;
+								revertLengths(i, oldLengths);
+								for (int j = 0; j < numJoints; j++) {
+									joints[j].connectionLen = 0;
+									for (int con = 0; con < joints[j].connections.size(); con++) {
+										joints[j].connectionLen += members[joints[j].connections[con]].length;
+									}
+								}
+								solveGeneralSystem();
+							}
+						}
+					}
+					if (oldLengths != NULL) {
+						delete[] oldLengths;
+						oldLengths = NULL;
+					}
+
+				}
+				
+				
+				//testing horizontal movement
+				if (!joints[i].fixedX){
+					oldLengths = checkIfBetterState(true, i, movementIncrement*pow(-1, i));
+					if (oldLengths != NULL) {
+					    if(solveInternal()) {
                             systemChanged = true;
                         } else {
-							joints[i].x -= movementIncrement;
+							joints[i].x -= movementIncrement* pow(-1, i);
 					    	revertLengths(i, oldLengths);//move node back and adjust dimensions
+							for (int j = 0; j < numJoints; j++) {
+								joints[j].connectionLen = 0;
+								for (int con = 0; con < joints[j].connections.size(); con++) {
+									joints[j].connectionLen += members[joints[j].connections[con]].length;
+								}
+							}
+							solveGeneralSystem();
 					    }
 					} else {
-						oldLengths = checkIfBetterState(true, i, -movementIncrement);
+						oldLengths = checkIfBetterState(true, i, -movementIncrement* pow(-1, i));
                         if (oldLengths != NULL){
-                            if (solve()){
+                            if (solveInternal()){
                                 systemChanged = true;
                             } else {
-                                joints[i].x += movementIncrement;
+                                joints[i].x += movementIncrement*pow(-1, i);
                             	revertLengths(i, oldLengths);
+								for (int j = 0; j < numJoints; j++) {
+									joints[j].connectionLen = 0;
+									for (int con = 0; con < joints[j].connections.size(); con++) {
+										joints[j].connectionLen += members[joints[j].connections[con]].length;
+									}
+								}
+								solveGeneralSystem();
                             }
                         }
 					}
@@ -220,56 +336,27 @@ void Truss::optimize(){
 
 				}
 
-			    //testing vertical movement
-				if (!joints[i].fixedY){
-					oldLengths = checkIfBetterState(false, i, movementIncrement);
-					if (oldLengths != NULL) {
-						if(solve()) {
-							systemChanged = true;
-						} else {
-							joints[i].x -= movementIncrement;
-							revertLengths(i, oldLengths);//move node back and adjust dimensions
-						}
-					} else {
-						oldLengths = checkIfBetterState(false, i, -movementIncrement);
-						if (oldLengths != NULL){
-							if (solve()){
-								systemChanged = true;
-							} else {
-								joints[i].x += movementIncrement;
-								revertLengths(i, oldLengths);
-							}
-						}
-					}
-					if(oldLengths != NULL){
-						delete [] oldLengths;
-						oldLengths = NULL;
-					}
-
-				}
+				
 				//both movement directions tested
-
+				//output(cout);
+//				system("pause");
 			}
 			//all joints have been moved
 		}
 		//system did not change on last iteration
-		movementIncrement /= 4;
+		movementIncrement /= 2;
 	}
 	//movement increment <0.01
 }
 
 
 
-void Truss::output(ofstream & out){
+void Truss::output(ostream & out) const{
 	for(int i  = 0; i < numJoints; i++){
-		out << "Joint " << i+1 << ":  ( " << joints[i].x << " , " << joints[i].y << " )" << endl;
+		out << "Joint " << i << ":  (" << joints[i].x << ", " << joints[i].y << ")" << endl;
 	}
+	out << endl;
 	for(int i  = 0; i < numMembers; i++){
-		out << "Member " << i+1 << ": " << validForces[i].x << " kN" << endl;
+		out << "Member " << i << ": " << this->validForces[i] << " kN" << endl;
 	}
 }
-
-
-
-
-

@@ -40,3 +40,9 @@
 .idea
 cmake-build-debug
 CMakeLists
+
+#Visual Studio
+.vs
+Truss Optimizer VS
+x64
+Truss Optimizer.sln
