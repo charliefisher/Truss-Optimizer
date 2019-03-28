@@ -5,7 +5,8 @@
 
 using namespace std;
 
-const string FILEIN = "C:\\Users\\charl\\OneDrive\\Desktop\\truss\\11_joint_triangular_truss.txt", FILEOUT = "C:\\Users\\charl\\OneDrive\\Desktop\\truss\\optimized_11_joint_triangular_truss.txt";
+const string FILEIN = "", 
+			 FILEOUT = "";
 
 int main(){
     ifstream fin(FILEIN);
