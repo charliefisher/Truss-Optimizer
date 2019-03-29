@@ -5,8 +5,8 @@
 
 using namespace std;
 
-const string FILEIN = "", 
-			 FILEOUT = "";
+const string FILEIN = "C:\\Users\\charl\\OneDrive\\Desktop\\truss\\.txt", 
+			 FILEOUT = "C:\\Users\\charl\\OneDrive\\Desktop\\truss\\_optimized.txt";
 
 int main(){
     ifstream fin(FILEIN);
@@ -28,13 +28,16 @@ int main(){
         joints[joint1Num].connections.push_back(i);
         joints[joint2Num].connections.push_back(i);
     }
-
+	fin.close();
+	cout << "Starting Optimization..." << endl;
 	clock_t tStart = clock();
     truss.optimize();
+	cout << "---Finished Optimization---" << endl << endl;
     truss.output(fout);
 	truss.output(cout);
+	cout << endl;
 	printf("Time: %.3fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
-
+	fout.close();
 	system("pause");
 	return 0;
 }

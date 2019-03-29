@@ -1,5 +1,6 @@
 #include "Truss.hpp"
 #include <armadillo>
+#include <iomanip>
 
 using namespace arma;
 
@@ -239,7 +240,7 @@ void Truss::revertLengths(int jointNum, double * oldLengths){
 void Truss::optimize(){
 	initialSolve();
 	bool systemChanged = false;
-	long double movementIncrement = 0.001;
+	long double movementIncrement = 0.0001;
 	double * oldLengths = NULL;
 
 	while (movementIncrement > MIN_MOVEMENT_INCREMENT){
@@ -341,10 +342,12 @@ void Truss::optimize(){
 				//output(cout);
 //				system("pause");
 			}
+
 			//all joints have been moved
 		}
 		//system did not change on last iteration
 		movementIncrement /= 2;
+		cout << "Movement Increment Changed to: " << movementIncrement << endl;
 	}
 	//movement increment <0.01
 }
@@ -356,7 +359,10 @@ void Truss::output(ostream & out) const{
 		out << "Joint " << i << ":  (" << joints[i].x << ", " << joints[i].y << ")" << endl;
 	}
 	out << endl;
+	double totalLength = 0;
 	for(int i  = 0; i < numMembers; i++){
-		out << "Member " << i << ": " << this->validForces[i] << " kN" << endl;
+		totalLength += members[i].length;
+		out << "Member " << setw(4) << i << ": " << setw(20) << this->validForces[i] << " kN" << "\tLength: " << members[i].length << endl;
 	}
+	out << endl << "Total Length: " << totalLength << endl;
 }

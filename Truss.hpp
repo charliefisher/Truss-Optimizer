@@ -11,7 +11,7 @@ using namespace std;
 class Truss {
 	public:
 		const double MAX_MEMBER_FORCE = 7.0000000000;
-		const long double MIN_MOVEMENT_INCREMENT = 0.000001;
+		const long double MIN_MOVEMENT_INCREMENT = 0.0000000000001;
 		// assume that up and right are positive for position
 		// assume that up and right are positive for forces
 		struct Joint{
