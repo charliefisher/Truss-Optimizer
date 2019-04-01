@@ -23,7 +23,7 @@ x<sub>J<sub>N</sub></sub>	y<sub>J<sub>N</sub></sub>	fixedX<sub>J<sub>N</sub></su
 1	Connection<sub>1</sub>	Connection<sub>2</sub>  
 2	Connection<sub>1</sub>	Connection<sub>2</sub>  
 &#8942  
-N<sub>members</sub>	Connection<sub>1</sub>	Connection<sub>2</sub>
+N<sub>members</sub>-1	Connection<sub>1</sub>	Connection<sub>2</sub>
 </pre> 
   
 ```fixedX``` and ```fixedY``` are boolean values are indicated by 1 for true and 0 for false.
