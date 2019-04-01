@@ -9,7 +9,6 @@ This truss optimizer uses[Armadillo](http://arma.sourceforge.net/docs.html) lice
 ## How to Input a Truss
 
 The input file must follow the format : 
-```html
 <pre>
 N<sub>joints</sub>	N<sub>members</sub>  
   
@@ -26,7 +25,7 @@ x<sub>J<sub>N</sub></sub>	y<sub>J<sub>N</sub></sub>	fixedX<sub>J<sub>N</sub></su
 &#8942  
 N<sub>members</sub>	Connection <sub>1<\sub>	Connection<sub>2<\sub>
 </pre>  
-```
+
 ## Authors
 
 * **[Aidan Baksh](https://github.com/aidanbaksh)**
