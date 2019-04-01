@@ -13,8 +13,8 @@ The input file must follow the format :
 N<sub>joints</sub>	N<sub>members</sub>  
   
 (Joint Locations)  
-x<sub>J1</sub>	y<sub>J1</sub>	fixedX<sub>J1</sub>	fixedY<sub>J1</sub>	externalX<sub>J1</sub>		externalY<sub>J1</sub>  
-x<sub>J2</sub>	y<sub>J2</sub>	fixedX<sub>J2</sub>	fixedY<sub>J2</sub>	externalX<sub>J2</sub>		externalY<sub>J2</sub>  
+x<sub>J1</sub>	y<sub>J1</sub>	fixedX<sub>J1</sub>		fixedY<sub>J1</sub>		externalX<sub>J1</sub>	externalY<sub>J1</sub>  
+x<sub>J2</sub>	y<sub>J2</sub>	fixedX<sub>J2</sub>		fixedY<sub>J2</sub>		externalX<sub>J2</sub>	externalY<sub>J2</sub>  
 &#8942  
 x<sub>J<sub>N</sub></sub>	y<sub>J<sub>N</sub></sub>	fixedX<sub>J<sub>N</sub></sub>		fixedY<sub>J<sub>N</sub></sub>		externalX<sub>J<sub>N</sub></sub>	externalY<sub>J<sub>N</sub></sub>  
   
