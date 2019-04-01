@@ -2,16 +2,38 @@
 #include <iostream>
 #include <time.h>
 #include "Truss.hpp"
+#include <cstdlib>
+#include <string>
 
 using namespace std;
 
-const string FILEIN = "C:\\Users\\charl\\OneDrive\\Desktop\\truss\\1_symmetric_input", 
-			 FILEOUT = "C:\\Users\\charl\\OneDrive\\Desktop\\truss\\1_symmetric_output";
+const string FILEIN = "C:\\Users\\charl\\OneDrive\\Desktop\\truss\\1_11_joint_triangular_truss", 
+			 FILEOUT = "C:\\Users\\charl\\OneDrive\\Desktop\\truss\\1_optimized_11_joint_triangular_truss";
 
 int main(){
     ifstream fin(FILEIN+".txt");
-    ofstream fout(FILEOUT+".txt");
-	ofstream csvout(FILEOUT + ".csv");
+	bool defaultFile = true;
+	string filePath = "";
+	while (!fin) {
+		if (defaultFile)
+			defaultFile = false;
+		else {
+			cout << "Failed to open " << filePath << endl;
+		}
+		cout << "Please input file path of input file (with file extension)" << endl;
+		cin >> filePath;
+		fin = ifstream(filePath);
+	}
+	ofstream fout, csvout;
+	if (defaultFile) {
+		fout = ofstream(FILEOUT + ".txt");
+		csvout = ofstream(FILEOUT + ".csv");
+	}
+	else {
+		fout = ofstream("Optimized_Truss.txt");
+		csvout = ofstream("Optimized_Truss.csv");
+	}
+	
 	int numJoints = 0, numMembers = 0;
     fin >> numJoints >> numMembers;
     Truss truss(numJoints, numMembers);
