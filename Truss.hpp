@@ -34,6 +34,7 @@ class Truss {
 		Truss(int numJoints, int numMembers);
 		~Truss();
 		void output(ostream & out) const;
+		void makeCSV(ostream & out) const;
 		Joint* getJoints();
 		Member* getMembers();
 

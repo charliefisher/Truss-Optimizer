@@ -1,0 +1,18 @@
+Joint 0:  (0, 0)
+Joint 1:  (0, -1.7929)
+Joint 2:  (1.14485, -0.8682)
+Joint 3:  (2.0069, -2.1298)
+Joint 4:  (2.40675, -1.3432)
+Joint 5:  (5, -1.92649)
+
+Member    0:             -2.22976 kN	Length: 1.7929
+Member    1:                    7 kN	Length: 1.43682
+Member    2:              1.70429 kN	Length: 1.47165
+Member    3:             -6.99998 kN	Length: 2.03498
+Member    4:             0.913644 kN	Length: 1.52799
+Member    5:               6.8255 kN	Length: 1.34834
+Member    6:             0.974165 kN	Length: 0.882396
+Member    7:             -6.84511 kN	Length: 3
+Member    8:                    7 kN	Length: 2.65804
+
+Total Length: 16.1531

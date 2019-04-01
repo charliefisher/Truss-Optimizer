@@ -5,12 +5,13 @@
 
 using namespace std;
 
-const string FILEIN = "C:\\Users\\charl\\OneDrive\\Desktop\\truss\\.txt", 
-			 FILEOUT = "C:\\Users\\charl\\OneDrive\\Desktop\\truss\\_optimized.txt";
+const string FILEIN = "C:\\Users\\charl\\OneDrive\\Desktop\\truss\\1_symmetric_input", 
+			 FILEOUT = "C:\\Users\\charl\\OneDrive\\Desktop\\truss\\1_symmetric_output";
 
 int main(){
-    ifstream fin(FILEIN);
-    ofstream fout(FILEOUT);
+    ifstream fin(FILEIN+".txt");
+    ofstream fout(FILEOUT+".txt");
+	ofstream csvout(FILEOUT + ".csv");
 	int numJoints = 0, numMembers = 0;
     fin >> numJoints >> numMembers;
     Truss truss(numJoints, numMembers);
@@ -34,7 +35,10 @@ int main(){
     truss.optimize();
 	cout << "---Finished Optimization---" << endl << endl;
     truss.output(fout);
+	truss.makeCSV(csvout);
 	truss.output(cout);
+	fout.close();
+	csvout.close();
 	cout << endl;
 	printf("Time: %.3fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
 	fout.close();

@@ -366,3 +366,9 @@ void Truss::output(ostream & out) const{
 	}
 	out << endl << "Total Length: " << totalLength << endl;
 }
+
+void Truss::makeCSV(ostream & out) const {
+	for (int i = 0; i < numJoints; i++) {
+		out <<  joints[i].x-0.1 << "," << joints[i].y << endl;
+	}
+}

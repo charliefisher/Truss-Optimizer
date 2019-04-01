@@ -1,0 +1,39 @@
+Joint 0:  (0, 0)
+Joint 1:  (14.2, 0)
+Joint 2:  (1.83965, 0.5106)
+Joint 3:  (12.3603, 0.5106)
+Joint 4:  (2.43107, -0.0461)
+Joint 5:  (11.7689, -0.0461)
+Joint 6:  (3.7894, 1.2321)
+Joint 7:  (10.4106, 1.2321)
+Joint 8:  (5.1, 0.0178)
+Joint 9:  (9.1, 0.0178)
+Joint 10:  (6.15751, 1.728)
+Joint 11:  (8.04249, 1.728)
+Joint 12:  (7.1, 0.270857)
+
+Member    0:                   -7 kN	Length: 1.9092
+Member    1:              6.74623 kN	Length: 2.43151
+Member    2:                   -7 kN	Length: 1.9092
+Member    3:              6.74623 kN	Length: 2.43151
+Member    4:            -0.653373 kN	Length: 0.812212
+Member    5:             -6.68473 kN	Length: 2.07896
+Member    6:            -0.653373 kN	Length: 0.812212
+Member    7:             -6.68473 kN	Length: 2.07896
+Member    8:             0.254282 kN	Length: 1.86517
+Member    9:              6.08582 kN	Length: 2.6697
+Member   10:             0.254282 kN	Length: 1.86517
+Member   11:              6.08582 kN	Length: 2.6697
+Member   12:              1.04604 kN	Length: 1.78667
+Member   13:                   -7 kN	Length: 2.41948
+Member   14:              1.04604 kN	Length: 1.78667
+Member   15:                   -7 kN	Length: 2.41948
+Member   16:             0.724295 kN	Length: 2.01075
+Member   17:              6.52205 kN	Length: 2.01595
+Member   18:             0.724295 kN	Length: 2.01075
+Member   19:              6.52205 kN	Length: 2.01595
+Member   20:                   -7 kN	Length: 1.88497
+Member   21:             0.975027 kN	Length: 1.73538
+Member   22:             0.975027 kN	Length: 1.73538
+
+Total Length: 45.3549
