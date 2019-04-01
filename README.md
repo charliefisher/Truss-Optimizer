@@ -4,7 +4,7 @@ Automatically optimizes a given truss design by reducing the total length of the
 
 ## Getting Started
 
-This truss optimizer uses [Armadillo](http://arma.sourceforge.net/docs.html) licensed under [Apache License 2.0](http://arma.sourceforge.net/license.html). The library is included in this repository for convenience. In order to run the program, the ```blas``` and ```lapack``` dll files must be copied to the same directory as the .exe of this application. The ```blas``` and ```lapack``` dll files are located in ```Truss Optimizer\armadillo-9.300.2\examples\lib_win64``` and are named ```blas_win64_MT.dll``` and ```lapack_win64_MT.dll```, respectively.
+This truss optimizer uses [Armadillo](http://arma.sourceforge.net/docs.html) licensed under [Apache License 2.0](http://arma.sourceforge.net/license.html). The library is included in this repository for convenience. In order to run the program, the ```blas``` and ```lapack``` ```.dll``` files must be copied to the same directory as the ```.exe``` of this application. The ```blas``` and ```lapack``` dll files are located in ```Truss Optimizer\armadillo-9.300.2\examples\lib_win64``` and are named ```blas_win64_MT.dll``` and ```lapack_win64_MT.dll```, respectively.
 
 ## How to Input a Truss
 
