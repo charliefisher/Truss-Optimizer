@@ -48,7 +48,6 @@ x64
 Truss Optimizer.sln
 Debug
 
-# Main Executable
-!Truss Optimizer.exe
+# Libraries
 !blas_win64_MT.dll
 !lapack_win64_MT.dll
