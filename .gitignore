@@ -50,3 +50,5 @@ Debug
 
 # Main Executable
 !Truss Optimizer.exe
+!blas_win64_MT.dll
+!lapack_win64_MT.dll
