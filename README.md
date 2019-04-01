@@ -1,6 +1,6 @@
 # Truss Optimizer
 
-Automatically optimizes a given truss design by reducing the total length of the members.Written for MTE 119 Truss Project(Winter 2019).
+Automatically optimizes a given truss design by reducing the total length of the members.Written for MTE 119 Truss Project (Winter 2019).
 
 ## Getting Started
 
