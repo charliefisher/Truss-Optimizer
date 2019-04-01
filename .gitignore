@@ -41,9 +41,12 @@
 cmake-build-debug
 CMakeLists
 
-#Visual Studio
+# Visual Studio
 .vs
 Truss Optimizer VS
 x64
 Truss Optimizer.sln
 Debug
+
+# Main Executable
+!Truss Optimizer.exe
