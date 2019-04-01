@@ -19,11 +19,11 @@ x<sub>J2</sub>		y<sub>J2</sub>		fixedX<sub>J2</sub>	fixedY<sub>J2</sub>	external
 x<sub>J<sub>N</sub></sub>	y<sub>J<sub>N</sub></sub>	fixedX<sub>J<sub>N</sub></sub>		fixedY<sub>J<sub>N</sub></sub>		externalX<sub>J<sub>N</sub></sub>	externalY<sub>J<sub>N</sub></sub>  
   
 (Member Connections)  
-0	Connection<sub>1</sub>		Connection<sub>2</sub>  
-1	Connection<sub>1</sub>		Connection<sub>2</sub>  
-2	Connection<sub>1</sub>		Connection<sub>2</sub>  
+0	Connection<sub>1</sub>	Connection<sub>2</sub>  
+1	Connection<sub>1</sub>	Connection<sub>2</sub>  
+2	Connection<sub>1</sub>	Connection<sub>2</sub>  
 &#8942  
-N<sub>members</sub>	Connection<sub>1</sub>		Connection<sub>2</sub>
+N<sub>members</sub>	Connection<sub>1</sub>	Connection<sub>2</sub>
 </pre>  
 
 ## Authors
