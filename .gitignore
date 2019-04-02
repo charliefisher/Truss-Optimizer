@@ -49,5 +49,4 @@ Truss Optimizer.sln
 Debug
 
 # Libraries
-!blas_win64_MT.dll
-!lapack_win64_MT.dll
+!armadillo-9.300.2
